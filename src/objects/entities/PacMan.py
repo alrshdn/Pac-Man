@@ -1,15 +1,17 @@
+from src.game_image import GameImage
 from src.objects.entities.Entity import *
 
 
 class PacMan(Entity):
     images = []
+
     def __init__(self, speed=0.5, position=(0, 3)):
         super().__init__(speed, position)
         self.direction = 0
-        self.image = None
+        self.images = GameImage()
         self.score = 0
         self.lives = 3
-
+        self.direction_image()
     def look_up(self):
         self.direction = 1
 
@@ -22,14 +24,15 @@ class PacMan(Entity):
     def look_left(self):
         self.direction = -2
     def direction_image(self):
-        if self.direction == 'Left':
-            self._image = images.return_image('pacmanL')
-
-        elif self.direction == 'Right':
+        images = self.images
+        if self.direction == 0 or self.direction == 2:
             self._image = images.return_image('pacmanR')
 
-        elif self.direction == 'Down':
+        elif self.direction == -2:
+            self._image = images.return_image('pacmanL')
+
+        elif self.direction == -1:
             self._image = images.return_image('pacmanD')
 
-        elif self.direction == 'Up':
+        elif self.direction == 1:
             self._image = images.return_image('pacmanU')

@@ -12,9 +12,10 @@ class Game:
     def __init__(self, ):
         self.window = Window()
         self.board = Board()
+
         self.pacman = PacMan()
 
-    def create_board(self):
+    def create_board(self,_images):
         root = self.window.root
 
         for row in range(self.board.height):
@@ -28,20 +29,22 @@ class Game:
                     canvas.create_rectangle(0, 0, 32, 32, fill=self.board.empty_color)
 
                 canvas.grid(row=row, column=column, sticky="nsew", padx=2, pady=2)
-        frame = Frame(root, width=32, height=32)
-        frame.pack()
-        frame.place(anchor='center', relx=0.5, rely=0.5)
-
-        img = ImageTk.PhotoImage(Image.open("forest.jpg"))
-        label = Label(frame, image=img)
         pac_position = self.pacman.position
-        label.grid(row=pac_position[0], column=pac_position[1])
+        canvas = Canvas(root, width= 32, height=32, background="black")
+        canvas.create_image(32,32,image = self.pacman._image)
+        canvas.grid(row=pac_position[0], column=pac_position[1])
+
+
+
 
     def start(self):
-        self.create_board()
+        self.create_board(self.window._images)
 
     def __listen_to_events(self):
         self.window.root.bind('<Left>', self.pacman.look_left())
         self.window.root.bind('<Right>', self.pacman.look_right())
         self.window.root.bind('<Up>', self.pacman.look_up())
         self.window.root.bind('<Down>', self.pacman.look_down())
+# Is it works?
+# can you push it to github?
+
