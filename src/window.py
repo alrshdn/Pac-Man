@@ -11,5 +11,3 @@ class Window:
 
         self.root.minsize(self.window_width, self.window_height)
         self.root.maxsize(self.window_width, self.window_height)
-        from src.game_image import GameImage
-        self._images= GameImage()

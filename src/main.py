@@ -7,5 +7,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-# Permission denied
-# try to run the program

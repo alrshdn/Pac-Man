@@ -5,46 +5,60 @@ from objects.entities.Entity import *
 from objects.entities.PacMan import *
 from objects.entities.Ghost import *
 from PIL import ImageTk, Image
+import time
 
 
 class Game:
 
-    def __init__(self, ):
-        self.window = Window()
+    def __init__(self):
+        # Static
+        global window
+        window = Window()
+        #self.window = Window()
         self.board = Board()
+        self.images = GameImage()
 
-        self.pacman = PacMan()
+        # Movable
+        self.pacman = PacMan(root=window.root, images=self.images)
 
-    def create_board(self,_images):
-        root = self.window.root
+    def start(self):
+        self.create_board()
+        self.__events_callbacks()
+        self.create_entities()
+
+        # self.create_items()
+        # self.create_stats()
+        return window.root
+
+    def create_board(self):
+        root = window.root
 
         for row in range(self.board.height):
             for column in range(self.board.width):
                 is_wall = self.board.board[row][column] == 1
-                canvas = Canvas(root, width=32, height=32, borderwidth=0, bd=0, highlightthickness=0)
+
+                canvas = Canvas(root, width=34, height=34, borderwidth=0, bd=0,
+                                highlightthickness=2, highlightcolor='black', highlightbackground='black')
                 canvas.configure(bg=self.board.wall_color[1])
                 if is_wall:
                     canvas.create_rectangle(0, 0, 22, 22, fill=self.board.wall_color[0])
                 else:
                     canvas.create_rectangle(0, 0, 32, 32, fill=self.board.empty_color)
 
-                canvas.grid(row=row, column=column, sticky="nsew", padx=2, pady=2)
-        pac_position = self.pacman.position
-        canvas = Canvas(root, width= 32, height=32, background="black")
-        canvas.create_image(32,32,image = self.pacman._image)
-        canvas.grid(row=pac_position[0], column=pac_position[1])
+                canvas.place(width=32, height=32, x=column * 32, y=row * 32)
 
+    def create_entities(self):
+        root = window.root
 
+        # Pac-Man
+        self.pacman.canvas=Canvas(window.root, width=28, height=28, borderwidth=0, bd=0,
+                             bg=self.board.empty_color, highlightthickness=0)
+        self.pacman.canvas.create_image(14, 14, image=self.pacman.image)
 
-
-    def start(self):
-        self.create_board(self.window._images)
-
-    def __listen_to_events(self):
-        self.window.root.bind('<Left>', self.pacman.look_left())
-        self.window.root.bind('<Right>', self.pacman.look_right())
-        self.window.root.bind('<Up>', self.pacman.look_up())
-        self.window.root.bind('<Down>', self.pacman.look_down())
-# Is it works?
-# can you push it to github?
-
+        self.pacman.canvas.place(x=self.pacman.position[0] * 32 + 16, y=self.pacman.position[1] * 32 + 2)
+        self.pacman.canvas.delete()
+    def __events_callbacks(self):
+        window.root.bind('<Left>',  lambda _: self.pacman.look(-2))
+        window.root.bind('<Right>', lambda _: self.pacman.look(2))
+        window.root.bind('<Up>',    lambda _: self.pacman.look(1))
+        window.root.bind('<Down>',  lambda _: self.pacman.look(-1))
