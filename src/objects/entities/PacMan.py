@@ -1,5 +1,6 @@
 from src.game_image import GameImage
 from src.objects.entities.Entity import *
+from tkinter import *
 
 
 class PacMan(Entity):

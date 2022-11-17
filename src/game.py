@@ -41,9 +41,9 @@ class Game:
                                 highlightthickness=2, highlightcolor='black', highlightbackground='black')
                 canvas.configure(bg=self.board.wall_color[1])
                 if is_wall:
-                    canvas.create_rectangle(0, 0, 22, 22, fill=self.board.wall_color[0])
+                    canvas.create_rectangle(0, 0, 22, 22, fill=self.board.wall_color[0],outline='black')
                 else:
-                    canvas.create_rectangle(0, 0, 32, 32, fill=self.board.empty_color)
+                    canvas.create_rectangle(0, 0, 32, 32, fill=self.board.empty_color, outline='black' )
 
                 canvas.place(width=32, height=32, x=column * 32, y=row * 32)
 

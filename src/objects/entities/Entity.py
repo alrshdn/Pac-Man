@@ -1,6 +1,7 @@
 class Entity(object):
 
-    def __init__(self, speed: int, position: tuple):
+    def __init__(self, step: int, speed: int, position: list):
+        self.step = step
         self.speed = speed
         self.position = position
 
