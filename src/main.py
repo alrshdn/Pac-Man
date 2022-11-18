@@ -1,5 +1,5 @@
 import entry
-# run the program
+
 
 def main():
     entry.entry()

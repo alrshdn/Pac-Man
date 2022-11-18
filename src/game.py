@@ -14,7 +14,6 @@ class Game:
         # Static
         global window
         window = Window()
-        #self.window = Window()
         self.board = Board()
         self.images = GameImage()
 
@@ -51,14 +50,15 @@ class Game:
         root = window.root
 
         # Pac-Man
-        self.pacman.canvas=Canvas(window.root, width=28, height=28, borderwidth=0, bd=0,
-                             bg=self.board.empty_color, highlightthickness=0)
+        self.pacman.canvas = Canvas(window.root, width=28, height=28, borderwidth=0, bd=0,
+                                    bg=self.board.empty_color, highlightthickness=0)
         self.pacman.canvas.create_image(14, 14, image=self.pacman.image)
 
         self.pacman.canvas.place(x=self.pacman.position[0] * 32 + 16, y=self.pacman.position[1] * 32 + 2)
         self.pacman.canvas.delete()
+
     def __events_callbacks(self):
         window.root.bind('<Left>',  lambda _: self.pacman.look(-2))
         window.root.bind('<Right>', lambda _: self.pacman.look(2))
-        window.root.bind('<Up>',    lambda _: self.pacman.look(1))
-        window.root.bind('<Down>',  lambda _: self.pacman.look(-1))
+        window.root.bind('<Up>',    lambda _: self.pacman.look(-1))
+        window.root.bind('<Down>',  lambda _: self.pacman.look(1))
