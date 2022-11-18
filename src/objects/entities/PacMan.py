@@ -31,19 +31,19 @@ class PacMan(Entity):
 
         if self.direction == -1:
             self.image = images.return_image('pacmanU')
-            self.position[1] -= self.step
+            self.move(1, -1)
 
             print("^^^")
 
         elif self.direction == 1:
             self.image = images.return_image('pacmanD')
-            self.position[1] += self.step
+            self.move(1, 1)
 
             print("vvv")
 
         elif self.direction == 2:
             self.image = images.return_image('pacmanR')
-            self.position[0] += self.step
+            self.move(0, 1)
 
             print(">>>")
 
