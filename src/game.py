@@ -62,3 +62,5 @@ class Game:
         window.root.bind('<Right>', lambda _: self.pacman.look(2))
         window.root.bind('<Up>',    lambda _: self.pacman.look(-1))
         window.root.bind('<Down>',  lambda _: self.pacman.look(1))
+
+        window.root.bind('r',       lambda _: self.pacman.restart())

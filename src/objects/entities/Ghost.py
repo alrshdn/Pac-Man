@@ -3,7 +3,7 @@ from src.objects.entities.Entity import *
 
 class Ghost(Entity):
 
-    def __init__(self, speed: int, position: tuple, g_id: int):
+    def __init__(self, speed: int, position: list, g_id: int):
         super().__init__(speed, position)
         self.id = g_id
         self.state = 0
@@ -21,5 +21,12 @@ class Ghost(Entity):
             self.direction = None
             self.image = None
 
+    def successor(self):
+        pass
+
+    def heuristic(self):
+        pass
+
     def movement(self):
         pass
+
