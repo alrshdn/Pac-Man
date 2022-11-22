@@ -11,11 +11,15 @@ class Game:
         self.images = GameImage()
 
         # Movable
-        self.pacman = PacMan(root=self.window.root, images=self.images)
+        self.pacman = PacMan(root=self.window.root,
+                             images=self.images,
+                             step=0.5,
+                             speed=1,
+                             position=[13.5, 23.0])
 
     def start(self):
         self.create_board()
-        self.__events_listen()
+        self.__set_events_callbacks()
         self.create_entities()
 
         # self.create_items()
@@ -49,12 +53,14 @@ class Game:
         self.pacman.canvas.place(x=self.pacman.position[0] * 32 + 16, y=self.pacman.position[1] * 32 + 2)
         self.pacman.canvas.delete()
 
-    # TODO change name
-    def __events_listen(self):
+    def __set_events_callbacks(self):
         root = self.window.root
-        root.bind('<Left>', lambda _: self.pacman.event_callback(-2))
-        root.bind('<Right>', lambda _: self.pacman.event_callback(2))
-        root.bind('<Up>', lambda _: self.pacman.event_callback(-1))
-        root.bind('<Down>', lambda _: self.pacman.event_callback(1))
-        # TODO nice key
+
+        # Movements
+        root.bind('<Left>', lambda _: self.pacman.move_callback(-2))
+        root.bind('<Right>', lambda _: self.pacman.move_callback(2))
+        root.bind('<Up>', lambda _: self.pacman.move_callback(-1))
+        root.bind('<Down>', lambda _: self.pacman.move_callback(1))
+
+        # Game status
         root.bind('r', lambda _: self.pacman.restart())
