@@ -1,6 +1,5 @@
 from tkinter import *
 from math import ceil, floor
-
 from src.board.Board import Board
 from src.game_image import GameImage
 from src.objects.entities.Entity import Entity
@@ -44,36 +43,34 @@ class PacMan(Entity):
             self.prev_direction = self.curr_direction
             self.curr_direction = new_direction
             self.change_direction()
-            # Starting event cycle
         else:
             print('Same directions')
 
     def change_direction(self):
-        if isinstance(self.curr_direction, int):
+        if self.curr_direction is not None:  # Not [None]
             self.__move(self.directions[self.curr_direction])
 
     def __move(self, direction: tuple):
         image_name, axis, sign, debug_info = direction
 
-        is_valid_move = self.__is_valid_move(axis, sign)
-        if is_valid_move:
+        if self.__is_valid_move(axis, sign):
             self.prev_direction = None
             print('Valid move')
 
-        elif isinstance(is_valid_move, bool):  # False : - same axis | not same axis
-
-            print('Not valid move')
-            if isinstance(self.prev_direction, int):
+        else:
+            print('Invalid move')
+            if self.prev_direction is not None:
                 self.curr_direction = self.prev_direction
                 prev_axis, prev_sign = self.directions[self.prev_direction][1:3]
-                if self.__is_valid_move(prev_axis, prev_sign):
-                    self.prev_direction = None
-                    print('Valid prev_direction move')
-                else:
-                    self.prev_direction = None
+
+                if not self.__is_valid_move(prev_axis, prev_sign):
                     self.curr_direction = None
-            else:
+                else:
+                    print('Valid prev_direction move')
+
                 self.prev_direction = None
+
+            else:
                 self.curr_direction = None
 
         print(debug_info)
@@ -87,25 +84,7 @@ class PacMan(Entity):
         # False: direction = None
         # False: direction = None
 
-        # if isinstance(self.prev_direction, int):
-        #     is_same_axis = abs(self.curr_direction) == abs(self.prev_direction)
-        #     print('is_same_axis', is_same_axis)
-        #     if not is_same_axis:
-        #         self.position[axis] += sign
-        #         if Board.start_state[int(self.position[0])][int(self.position[1])] == 1:
-        #             self.position[axis] -= sign
-        #             self.curr_direction = self.prev_direction
-        #             return None
-        #         self.position[axis] -= sign
-
-        # if not is_same_axis:  # Returns True if float position at axis is an integer
-        #     if isinstance(self.position[int(axis == 0)], int) or not self.position[int(axis == 0)].is_integer():
-        #         self.curr_direction = self.prev_direction
-        #         self.position[(axis + 1) % 2] += self.step * self.directions[self.curr_direction][2]
-        #     # Re-draw
-        #     return None
-
-        if isinstance(self.prev_direction, int):  # checking [Half moves] case
+        if self.prev_direction is not None:  # checking [Half moves] case
             same_axis = abs(self.curr_direction) == abs(self.prev_direction)
             if not same_axis:
                 other_axis = (axis + 1) % 2

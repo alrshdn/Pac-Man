@@ -15,8 +15,8 @@ def entry():
             pacman.position[axis] += pacman.step * sign
             pacman.refresh_pacman()
             root.update()
-            time.sleep(0.1)
+            time.sleep(pacman.speed * 0.1)
             pacman.change_direction()
         else:
             root.update()
-            time.sleep(0.005)
+            # time.sleep(0.005)
