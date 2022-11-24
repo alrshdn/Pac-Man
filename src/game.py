@@ -15,7 +15,7 @@ class Game:
                              images=self.images,
                              step=0.5,
                              speed=1,
-                             position=[13.5, 23.0])
+                             position=[13, 23])
 
     def start(self):
         self.create_board()
