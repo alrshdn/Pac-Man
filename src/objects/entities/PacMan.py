@@ -17,7 +17,6 @@ class PacMan(Entity):
         # Core
         self.root = root
         self.images = images
-        self.canvas = None
 
         # States
         self.directions = {
@@ -42,11 +41,11 @@ class PacMan(Entity):
             print('Not Same directions')
             self.prev_direction = self.curr_direction
             self.curr_direction = new_direction
-            self.change_direction()
+            self.update_direction()
         else:
             print('Same directions')
 
-    def change_direction(self):
+    def update_direction(self):
         if self.curr_direction is not None:  # Not [None]
             self.__move(self.directions[self.curr_direction])
 
@@ -154,7 +153,7 @@ class PacMan(Entity):
         self.image = self.images.return_image(self.directions[self.curr_direction][0])
         self.canvas.create_image(14, 14, image=self.image)
 
-        x, y = self.__unit_to_pixel()
+        x, y = self.unit_to_pixel()
         self.canvas.place(x=x, y=y)
 
     def __unit_to_pixel(self):

@@ -1,8 +1,10 @@
-from Entity import *
+from tkinter import Canvas
+
 from src.game_image import GameImage
+from src.objects.entities.Ghost import Ghost
 
 
-class Red(Entity):
+class Red(Ghost):
     def __init__(self,
                  root,
                  images: GameImage,
@@ -13,20 +15,15 @@ class Red(Entity):
 
         # Core
         self.root = root
-        self.images = images
-        self.canvas = None
-
-        # States
-        self.directions = {
-            # dir_id: (image_name, axis, sign, debug_info)
-            -1: ('blinky', 1, -1, "^^^"),
-            +1: ('blinky', 1, 1, "vvv"),
-            +2: ('blinky', 0, 1, ">>>"),
-            -2: ('blinky', 0, -1, "<<<")
-        }
 
         # Appearance
         self.curr_direction = None
         self.prev_direction = None
         self.image = images.return_image('blinky')
+
+    def search(self):
+        pass
+
+    def __move(self, param):
+        pass
 

@@ -1,4 +1,5 @@
 from objects.entities.PacMan import *
+from src.objects.entities.Red import Red
 from window import Window
 
 import time
@@ -50,12 +51,16 @@ class Game:
     def create_entities(self):
 
         # Pac-Man
-        self.pacman.canvas = Canvas(self.window.root, width=28, height=28, borderwidth=0, bd=0,
-                                    bg=self.board.empty_color, highlightthickness=0)
-        self.pacman.canvas.create_image(14, 14, image=self.pacman.image)
+        self.pacman.refresh_pacman()
 
-        self.pacman.canvas.place(x=self.pacman.position[0] * 32 + 16, y=self.pacman.position[1] * 32 + 2)
-        self.pacman.canvas.delete()
+        # -------------------------------------
+        # Red
+        self.red.canvas = Canvas(self.window.root, width=28, height=28, borderwidth=0, bd=0,
+                                    bg=self.board.empty_color, highlightthickness=0)
+        self.red.canvas.create_image(14, 14, image=self.red.image)
+
+        self.red.canvas.place(x=self.red.position[0] * 32 + 2, y=self.red.position[1] * 32 + 2)
+        self.red.canvas.delete()
 
     def __set_events_callbacks(self):
         root = self.window.root
