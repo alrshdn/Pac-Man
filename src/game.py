@@ -1,6 +1,10 @@
 from objects.entities.PacMan import *
 from window import Window
 
+import time
+
+global exists
+
 
 class Game:
 

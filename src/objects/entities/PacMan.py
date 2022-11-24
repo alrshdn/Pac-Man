@@ -129,7 +129,8 @@ class PacMan(Entity):
             else:
                 raise IndexError("Error")
 
-            return None
+            return True
+
         # when exception raised, that means moving from gate
 
     def restart(self):  # Needs to implement event loop restart
@@ -146,7 +147,7 @@ class PacMan(Entity):
         self.position = [13.5, 23]
         self.curr_direction = None
 
-    def refresh_pacman(self):
+    def refresh_pacman(self, image_name='pacmanL'):
         self.canvas.destroy()
         self.canvas = Canvas(self.root, width=28, height=28, borderwidth=0, bd=0,
                              bg='#161020', highlightthickness=0)
