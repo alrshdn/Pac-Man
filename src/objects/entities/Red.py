@@ -10,15 +10,15 @@ class Red(Ghost):
                  images: GameImage,
                  step: float,
                  speed: int,
-                 position: list):
-        super().__init__(step, speed, position)
+                 position: list,
+                 target_position: list,
+                 heuristic):
+        super().__init__(root, step, speed, position, target_position, heuristic)
 
         # Core
         self.root = root
 
         # Appearance
-        self.curr_direction = None
-        self.prev_direction = None
         self.image = images.return_image('blinky')
 
     def search(self):

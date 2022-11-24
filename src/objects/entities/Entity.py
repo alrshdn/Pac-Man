@@ -15,3 +15,6 @@ class Entity(object):
 
     def y_offset(self, offset: int):
         self.position[0] += offset
+
+    def unit_to_pixel(self):
+        return self.position[0] * 32 + 2, self.position[1] * 32 + 2

@@ -36,9 +36,18 @@ class PacMan(Entity):
         self.score = 0
         self.lives = 3
 
+    def movement(self):
+        is_moving = self.curr_direction is not None
+        if is_moving:
+            image_name, axis, sign = self.directions[self.curr_direction][0:3]
+            self.position[axis] += self.step * sign
+            self.refresh_pacman(image_name)
+            self.update_direction()
+
     def move_callback(self, new_direction: int):
         if self.curr_direction != new_direction:
-            print('Not Same directions')
+            print('Not Same direction')
+            # logging.log(3, 'Not Same direction')  # TODO
             self.prev_direction = self.curr_direction
             self.curr_direction = new_direction
             self.update_direction()
@@ -87,9 +96,10 @@ class PacMan(Entity):
             same_axis = abs(self.curr_direction) == abs(self.prev_direction)
             if not same_axis:
                 other_axis = (axis + 1) % 2
-                other_axis = self.position[other_axis]
-                if other_axis != int(other_axis):
+
+                if self.position[other_axis] != int(self.position[other_axis]):
                     return False
+
         pos_on_axis = self.position[axis]
 
         new_pos = pos_on_axis + (self.step * sign)
@@ -119,7 +129,7 @@ class PacMan(Entity):
 
         except IndexError:  # In cases of gates
             print("IndexError")
-            if self.curr_direction == 2:  # Going through the right portal
+            if self.curr_direction == 2:  # Going through the right portal+
                 self.position = [-1, self.position[1]]
 
             elif self.curr_direction == -2:  # Going through the left portal
@@ -148,13 +158,12 @@ class PacMan(Entity):
 
     def refresh_pacman(self, image_name='pacmanL'):
         self.canvas.destroy()
+
         self.canvas = Canvas(self.root, width=28, height=28, borderwidth=0, bd=0,
                              bg='#161020', highlightthickness=0)
-        self.image = self.images.return_image(self.directions[self.curr_direction][0])
+
+        self.image = self.images.return_image(image_name)
         self.canvas.create_image(14, 14, image=self.image)
 
         x, y = self.unit_to_pixel()
         self.canvas.place(x=x, y=y)
-
-    def __unit_to_pixel(self):
-        return self.position[0] * 32 + 2, self.position[1] * 32 + 2

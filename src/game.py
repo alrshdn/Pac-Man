@@ -8,7 +8,6 @@ global exists
 
 
 class Game:
-
     def __init__(self):
         # Static
         self.window = Window()
@@ -20,16 +19,46 @@ class Game:
                              images=self.images,
                              step=0.5,
                              speed=1,
-                             position=[13, 23])
+                             position=[1.0, 1.0])
+
+        self.red = Red(root=self.window.root,
+                       images=self.images,
+                       step=0.5,
+                       speed=1,
+                       position=[13.0, 23.0],
+                       target_position=[1.0, 1.0],
+                       heuristic= None)
 
     def start(self):
         self.create_board()
         self.__set_events_callbacks()
         self.create_entities()
+        self.main_loop()
 
-        # self.create_items()
-        # self.create_stats()
-        return self.window.root
+    def main_loop(self):
+        pacman = self.pacman
+
+        red = self.red
+
+        root = self.window.root
+        global exists
+        exists = True
+
+        def on_closing():
+            # if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            global exists
+            exists = False
+
+            root.destroy()
+
+        root.protocol("WM_DELETE_WINDOW", on_closing)
+
+        while exists:  # Window is running
+            pacman.movement()
+            # red.movement()
+
+            time.sleep(pacman.speed * 0.1)
+            root.update()
 
     def create_board(self):
         root = self.window.root
@@ -49,7 +78,6 @@ class Game:
                 canvas.place(width=32, height=32, x=column * 32, y=row * 32)
 
     def create_entities(self):
-
         # Pac-Man
         self.pacman.refresh_pacman()
 
