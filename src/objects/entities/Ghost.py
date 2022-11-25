@@ -4,50 +4,104 @@ from src.objects.entities.Entity import *
 class Ghost(Entity):
     def __init__(self,
                  root,
+                 images: GameImage,
                  step: float,
                  speed: int,
                  position: list,
                  target_position: list,
                  heuristic):
-        super().__init__(step, speed, position)
+        super().__init__(root, images, step, speed, position)
 
-        self.root = root
-
-        self.image = None
+        # States:
         self.directions = {
-            # dir_id: (image_name, axis, sign, debug_info)
+            # dir_id: (axis, sign, debug_info)
             -1: (1, -1, "^^^"),
             +1: (1, 1, "vvv"),
-            +2: (0, 1, ">>>"),
-            -2: (0, -1, "<<<")
+            -2: (0, -1, "<<<"),
+            +2: (0, 1, ">>>")
         }
+
+        # Dynamics:
+        self.curr_direction = -1  # override
+
+        # Artificial Intelligence:
         self.target_position = target_position
-        self.curr_direction = None
         self.heuristic = heuristic
 
-    def agent(self):
+    def movement(self):
         direction = self.search()
-        self.successor(direction)
+        self.curr_direction = direction
 
-    def search(self) -> tuple:  # A*
-        pass
+        self.successor(self.directions[direction])
+
+
+    def search(self):
+        """
+        -   Action Space:
+            UP/DOWN/LEFT/RIGHT (encoded as -1, +1, -2, and +2 respectively).
+        -   State Space:
+            All possible (x, y) positions the ghost can be at.
+        -   Goal:
+            Reaching target position.
+        -   Strategy:
+            Greedy Search (Best First Search)
+        -   Heuristic:
+            Dynamic (will change based on the inputted heuristic argument in the initializer).
+        :return: int (encoded direction)
+        """
+
+        # List all the possible states of the next move (successions):
+        successions = list()
+        directions = list()
+
+        for key in list(self.directions.keys())[0:2]:  # Up and Down
+            axis, sign = self.directions[key][0:2]
+
+            is_opposite = self.curr_direction == -1 * key
+            if self.__is_valid_move(axis, sign) and not is_opposite:
+                successions.append([self.position[0], self.position[1] + key])
+                directions.append(key)
+
+        for key in list(self.directions.keys())[2:]:  # Left and Right
+            axis, sign = self.directions[key][0:2]
+
+            is_opposite = self.curr_direction == -1 * key
+            if self.__is_valid_move(axis, sign) and not is_opposite:
+                successions.append([self.position[0] + key, self.position[1]])
+                directions.append(key)
+
+        # Calculate the cost of all the successions using the heuristic function:
+        costs = list()
+        for succession in successions:
+            cost = self.heuristic(succession, self.target_position)
+            costs.append(cost)
+
+        # Choose the succession with the least cost:
+        succession_index = costs.index(min(costs))
+        succession_direction = directions[succession_index]
+
+        # Return the direction of movement:
+        return succession_direction
 
     def successor(self, direction: tuple):
         """ Takes direction as input and makes moves by calling movement.  """
-        self.movement(direction)
-
-    def movement(self, direction: tuple):
         axis, sign = direction[0:2]
-        self.position[axis] += self.step * sign
-        self.refresh()
 
-    def refresh(self):
-        self.canvas.destroy()
+        if axis == 0:
+            self.x_offset(self.step * sign)
+        else:
+            self.y_offset(self.step * sign)
 
-        self.canvas = Canvas(self.root, width=28, height=28, borderwidth=0, bd=0,
-                             bg='#161020', highlightthickness=0)
+        self.__refresh_ghost()
 
-        self.canvas.create_image(14, 14, image=self.image)
+    def __is_valid_move(self, axis: int, sign: int):
 
-        x, y = self.unit_to_pixel()
-        self.canvas.place(x=x, y=y)
+        # In cases of ghost's half-moves:
+        other_axis = (axis + 1) % 2
+        if self.position[other_axis] != int(self.position[other_axis]):
+            return False
+
+        return super().is_valid_move(axis, sign)
+
+    def __refresh_ghost(self):
+        super().refresh()

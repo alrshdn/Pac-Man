@@ -38,7 +38,7 @@ class Board(object):
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]
-    width, height = len(start_state[0]), len(start_state)
+    width, height = float(len(start_state[0])), float(len(start_state))
 
     def __init__(self):
         self.board = self.start_state

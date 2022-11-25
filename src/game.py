@@ -1,7 +1,12 @@
-from objects.entities.PacMan import *
-from src.objects.entities.Red import Red
-from window import Window
+from src.window import Window
+from src.board.Board import Board
+from src.game_image import GameImage
 
+from objects.entities.PacMan import PacMan
+from src.objects.entities.Red import Red
+from src.objects.entities.Pink import Pink
+
+from tkinter import *
 import time
 
 global exists
@@ -21,13 +26,27 @@ class Game:
                              speed=1,
                              position=[1.0, 1.0])
 
+        def ghost_heuristic(succession, target):
+            return abs(succession[0] - target[0]) + abs(succession[1] - target[1])
+
+        def red_target():
+            return self.pacman.position
+
         self.red = Red(root=self.window.root,
                        images=self.images,
                        step=0.5,
                        speed=1,
                        position=[13.0, 23.0],
-                       target_position=[1.0, 1.0],
-                       heuristic= None)
+                       target_position=red_target(),
+                       heuristic=ghost_heuristic)
+
+        self.pink = Pink(root=self.window.root,
+                         images=self.images,
+                         step=0.5,
+                         speed=1,
+                         position=[11.0, 23.0],
+                         target_position=self.pacman.position,
+                         heuristic=ghost_heuristic)
 
     def start(self):
         self.create_board()
@@ -39,6 +58,7 @@ class Game:
         pacman = self.pacman
 
         red = self.red
+        pink = self.pink
 
         root = self.window.root
         global exists
@@ -55,16 +75,17 @@ class Game:
 
         while exists:  # Window is running
             pacman.movement()
-            # red.movement()
+            red.movement()
+            pink.movement()
 
-            time.sleep(pacman.speed * 0.1)
+            time.sleep(0.1 / pacman.speed)
             root.update()
 
     def create_board(self):
         root = self.window.root
 
-        for row in range(self.board.height):
-            for column in range(self.board.width):
+        for row in range(int(self.board.height)):
+            for column in range(int(self.board.width)):
                 is_wall = self.board.board[row][column] == 1
 
                 canvas = Canvas(root, width=34, height=34, borderwidth=0, bd=0,
@@ -78,17 +99,16 @@ class Game:
                 canvas.place(width=32, height=32, x=column * 32, y=row * 32)
 
     def create_entities(self):
-        # Pac-Man
-        self.pacman.refresh_pacman()
+        # --- Pac-Man ------------------------------------
+        self.pacman.refresh()
 
+        # --- Ghosts -------------------------------------
+        # Red:
+        self.red.refresh()
+
+        # Pink:
+        self.pink.refresh()
         # -------------------------------------
-        # Red
-        self.red.canvas = Canvas(self.window.root, width=28, height=28, borderwidth=0, bd=0,
-                                    bg=self.board.empty_color, highlightthickness=0)
-        self.red.canvas.create_image(14, 14, image=self.red.image)
-
-        self.red.canvas.place(x=self.red.position[0] * 32 + 2, y=self.red.position[1] * 32 + 2)
-        self.red.canvas.delete()
 
     def __set_events_callbacks(self):
         root = self.window.root
@@ -100,4 +120,4 @@ class Game:
         root.bind('<Down>', lambda _: self.pacman.move_callback(1))
 
         # Game status
-        root.bind('r', lambda _: self.pacman.restart())
+        root.bind('r', lambda _: self.pacman.restart_callback())

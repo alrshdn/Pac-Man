@@ -1,7 +1,7 @@
 from src.objects.entities.Ghost import *
 
 
-class Red(Ghost):
+class Pink(Ghost):
     def __init__(self,
                  root,
                  images: GameImage,
@@ -13,4 +13,4 @@ class Red(Ghost):
         super().__init__(root, images, step, speed, position, target_position, heuristic)
 
         # Appearance
-        self.image = images.return_image('blinky')
+        self.image = images.return_image('pinky')
