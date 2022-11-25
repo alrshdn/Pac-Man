@@ -21,8 +21,9 @@ class PacMan(Entity):
         }  # override
 
         # Dynamics:
-        self.curr_direction = None  # override
+        self.curr_direction = -2  # override
         self.__prev_direction = None
+        self.snapshot_direction = -2
 
         # Appearances:
         self.image = images.return_image('pacmanL')  # override
@@ -30,6 +31,13 @@ class PacMan(Entity):
         # Stats:
         self.__score = 0
         self.__lives = 3
+
+    def restart_callback(self):
+        # Update Pac-Man's attributes to default
+        self.__reset_default_attributes()
+
+        # Re-draw
+        self.__refresh_pacman()
 
     def move_callback(self, new_direction: int):
         if self.curr_direction != new_direction:
@@ -42,6 +50,8 @@ class PacMan(Entity):
             print('Same directions')
 
     def movement(self):
+        self.__update_direction()
+
         is_moving = self.curr_direction is not None
         if is_moving:
             axis, sign, image_name = self.directions[self.curr_direction][0:3]
@@ -52,7 +62,6 @@ class PacMan(Entity):
                 self.y_offset(self.step * sign)
 
             self.__refresh_pacman(image_name)
-            self.__update_direction()
 
     def __update_direction(self):
         if self.curr_direction is not None:
@@ -63,6 +72,7 @@ class PacMan(Entity):
 
         if self.__is_valid_move(axis, sign):
             self.__prev_direction = None
+            self.snap_direction = self.curr_direction
             print('Valid move')
 
         else:
@@ -75,13 +85,14 @@ class PacMan(Entity):
                     self.curr_direction = None
                 else:
                     print('Valid prev_direction move')
+                    self.snap_direction = self.curr_direction
 
                 self.__prev_direction = None
 
             else:
                 self.curr_direction = None
 
-        print(debug_info)
+            print(debug_info)
 
     def __is_valid_move(self, axis: int, sign: int):
 
@@ -98,7 +109,7 @@ class PacMan(Entity):
 
     def __reset_default_attributes(self) -> None:
         self.image = self.images.return_image('pacmanL')
-        self.position = [13.5, 23]
+        self.position[0], self.position[1] = 13.5, 23.0
         self.curr_direction = None
 
     def __refresh_pacman(self, image_name='pacmanL'):

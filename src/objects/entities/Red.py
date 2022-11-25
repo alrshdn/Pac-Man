@@ -1,4 +1,5 @@
-from src.objects.entities.Ghost import *
+from src.objects.entities.Ghost import Ghost
+from src.game_image import GameImage
 
 
 class Red(Ghost):
@@ -8,7 +9,7 @@ class Red(Ghost):
                  step: float,
                  speed: int,
                  position: list,
-                 target_position: list,
+                 target_position,
                  heuristic):
         super().__init__(root, images, step, speed, position, target_position, heuristic)
 

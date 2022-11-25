@@ -24,20 +24,38 @@ class Game:
                              images=self.images,
                              step=0.5,
                              speed=1,
-                             position=[1.0, 1.0])
+                             position=[13.5, 23.0])
 
         def ghost_heuristic(succession, target):
             return abs(succession[0] - target[0]) + abs(succession[1] - target[1])
 
-        def red_target():
+        def red_target_getter():
             return self.pacman.position
+
+        def pink_target_getter():
+            pacman_curr_dir = self.pacman.curr_direction
+            pacman_prev_dir = self.pacman.snap_direction
+            pacman_position = self.pacman.position
+
+            if pacman_curr_dir == -1:
+                target_position = [pacman_position[0] - 4, pacman_position[1] - 4]
+                return target_position
+
+            if pacman_curr_dir is not None:
+                axis, sign = self.pacman.directions[pacman_curr_dir][0:2]
+            else:
+                axis, sign = self.pacman.directions[pacman_prev_dir][0:2]
+
+            target_position = pacman_position.copy()
+            target_position[axis] += sign * 4
+            return target_position
 
         self.red = Red(root=self.window.root,
                        images=self.images,
                        step=0.5,
                        speed=1,
                        position=[13.0, 23.0],
-                       target_position=red_target(),
+                       target_position=red_target_getter,
                        heuristic=ghost_heuristic)
 
         self.pink = Pink(root=self.window.root,
@@ -45,7 +63,7 @@ class Game:
                          step=0.5,
                          speed=1,
                          position=[11.0, 23.0],
-                         target_position=self.pacman.position,
+                         target_position=pink_target_getter,
                          heuristic=ghost_heuristic)
 
     def start(self):

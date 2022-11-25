@@ -1,6 +1,7 @@
 from src.objects.entities.Entity import *
 
 
+
 class Ghost(Entity):
     def __init__(self,
                  root,
@@ -8,7 +9,7 @@ class Ghost(Entity):
                  step: float,
                  speed: int,
                  position: list,
-                 target_position: list,
+                 target_getter,
                  heuristic):
         super().__init__(root, images, step, speed, position)
 
@@ -19,21 +20,23 @@ class Ghost(Entity):
             +1: (1, 1, "vvv"),
             -2: (0, -1, "<<<"),
             +2: (0, 1, ">>>")
-        }
+        }  # override
 
         # Dynamics:
         self.curr_direction = -1  # override
 
         # Artificial Intelligence:
-        self.target_position = target_position
         self.heuristic = heuristic
+        self.target_getter = target_getter
+
+        self.target_position = None
+        self.point_canvas = Canvas()
 
     def movement(self):
         direction = self.search()
         self.curr_direction = direction
 
         self.successor(self.directions[direction])
-
 
     def search(self):
         """
@@ -69,6 +72,9 @@ class Ghost(Entity):
             if self.__is_valid_move(axis, sign) and not is_opposite:
                 successions.append([self.position[0] + key, self.position[1]])
                 directions.append(key)
+
+        # Get current target position:
+        self.target_position = self.target_getter()
 
         # Calculate the cost of all the successions using the heuristic function:
         costs = list()

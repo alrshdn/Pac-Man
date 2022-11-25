@@ -13,7 +13,7 @@ class Entity(object):
                  step: float,
                  speed: int,
                  position: list):
-        # Core:in
+        # Core:
         self.root = root
         self.canvas = Canvas()
 
@@ -46,7 +46,7 @@ class Entity(object):
         # In cases of decimal steps:
         if sign < 0:  # up and left
             rounding_new_pos = floor  # because value is decreased by a decimal step (self.step)
-        else:  # down and right=
+        else:  # down and right
             rounding_new_pos = ceil  # because value is increased by a decimal step (self.step)
         new_pos = rounding_new_pos(new_pos)
 
