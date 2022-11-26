@@ -5,6 +5,7 @@ from src.game_image import GameImage
 from objects.entities.PacMan import PacMan
 from src.objects.entities.Red import Red
 from src.objects.entities.Pink import Pink
+from src.objects.entities.Orange import Orange
 
 from tkinter import *
 import time
@@ -44,6 +45,10 @@ class Game:
             if pacman_curr_dir is not None:
                 axis, sign = self.pacman.directions[pacman_curr_dir][0:2]
             else:
+                if pacman_prev_dir == -1:
+                    target_position = [pacman_position[0] - 4, pacman_position[1] - 4]
+                    return target_position
+
                 axis, sign = self.pacman.directions[pacman_prev_dir][0:2]
 
             target_position = pacman_position.copy()
@@ -66,6 +71,14 @@ class Game:
                          target_position=pink_target_getter,
                          heuristic=ghost_heuristic)
 
+        self.orange = Orange(root=self.window.root,
+                             images=self.images,
+                             step=0.5,
+                             speed=1,
+                             position=[1.0, 23.0],
+                             target_position=red_target_getter,
+                             heuristic=ghost_heuristic)
+
     def start(self):
         self.create_board()
         self.__set_events_callbacks()
@@ -77,6 +90,7 @@ class Game:
 
         red = self.red
         pink = self.pink
+        orange = self.orange
 
         root = self.window.root
         global exists
@@ -95,6 +109,7 @@ class Game:
             pacman.movement()
             red.movement()
             pink.movement()
+            orange.movement()
 
             time.sleep(0.1 / pacman.speed)
             root.update()
@@ -126,6 +141,9 @@ class Game:
 
         # Pink:
         self.pink.refresh()
+
+        # Orange:
+        self.orange.refresh()
         # -------------------------------------
 
     def __set_events_callbacks(self):
