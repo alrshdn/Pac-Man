@@ -1,4 +1,4 @@
-from src.objects.entities.Ghost import *
+from objects.entities.Ghost import *
 
 
 class Orange(Ghost):

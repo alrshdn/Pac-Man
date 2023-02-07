@@ -1,5 +1,5 @@
-from src.objects.entities.Ghost import Ghost
-from src.game_image import GameImage
+from objects.entities.Ghost import Ghost
+from game_image import GameImage
 
 
 class Red(Ghost):
