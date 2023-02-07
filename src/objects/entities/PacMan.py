@@ -1,121 +1,117 @@
-from src.game_image import GameImage
-from src.board.Board import Board
 from src.objects.entities.Entity import *
-from tkinter import *
-from math import ceil, floor
 
 
 class PacMan(Entity):
+    def __init__(self,
+                 root,
+                 images: GameImage,
+                 step: float,
+                 speed: int,
+                 position: list):
+        super().__init__(root, images, step, speed, position)
 
-    def __init__(self, root, images: GameImage, step=0.5, speed=1, position=[13, 23]):
-        super().__init__(step, speed, position)
-        self.root = root
-        self.direction = 0
-        self.images = GameImage()
-        self.image = images.return_image('pacmanL')
-        self.score = 0
-        self.lives = 3
+        # States:
+        self.__image_id = 'pacman'
+        self.directions = {
+            # dir_id: (axis, sign, image_name, debug_info)
+            -1: (1, -1, self.__image_id + 'U', '^^^'),
+            +1: (1, 1, self.__image_id + 'D', 'vvv'),
+            -2: (0, -1, self.__image_id + 'L', '<<<'),
+            +2: (0, 1, self.__image_id + 'R', '>>>')
+        }  # override
 
-        self.canvas = None
+        # Dynamics:
+        self.curr_direction = -2  # override
+        self.__prev_direction = None
+        self.snapshot_direction = -2
 
-        self.after_id = None
+        # Appearances:
+        self.image = images.return_image('pacmanL')  # override
 
-    def look(self, side: int):
-        if self.direction != side:
-            self.direction = side
-            self.after_id = self.root.after(100, self.change_direction)
+        # Stats:
+        self.__score = 0
+        self.__lives = 3
 
-    def change_direction(self):
-        self.root.after_cancel(self.after_id)
-        images = self.images
+    def restart_callback(self):
+        # Update Pac-Man's attributes to default
+        self.__reset_default_attributes()
 
-        if self.direction == -1:
-            self.image = images.return_image('pacmanU')
-            self.move(1, -1)
+        # Re-draw
+        self.__refresh_pacman()
 
-            print("^^^")
+    def move_callback(self, new_direction: int):
+        if self.curr_direction != new_direction:
+            print('Not Same direction')
+            # logging.log(3, 'Not Same direction')  # TODO: Use a logging library
+            self.__prev_direction = self.curr_direction
+            self.curr_direction = new_direction
+            self.__update_direction()
+        else:
+            print('Same directions')
 
-        elif self.direction == 1:
-            self.image = images.return_image('pacmanD')
-            self.move(1, 1)
+    def movement(self):
+        self.__update_direction()
 
-            print("vvv")
+        is_moving = self.curr_direction is not None
+        if is_moving:
+            axis, sign, image_name = self.directions[self.curr_direction][0:3]
 
-        elif self.direction == 2:
-            self.image = images.return_image('pacmanR')
-            self.move(0, 1)
+            if axis == 0:
+                self.x_offset(self.step * sign)
+            else:
+                self.y_offset(self.step * sign)
 
-            print(">>>")
+            self.__refresh_pacman(image_name)
 
-        elif self.direction == 0 or self.direction == -2:
-            self.image = images.return_image('pacmanL')
-            self.move(0, -1)
+    def __update_direction(self):
+        if self.curr_direction is not None:
+            self.__move(self.directions[self.curr_direction])
 
-            print("<<<")
+    def __move(self, direction: tuple):
+        axis, sign, image_name, debug_info = direction
 
-        self.after_id = self.root.after(int(100/self.speed), self.change_direction)
-
-    def move(self, axis, sign):
-        if self.is_valid_move(axis, sign):
-            self.position[axis] += self.step * sign
-
-            # Destroy
-            self.canvas.destroy()
-
-            # Recreate Canvas
-            self.canvas = Canvas(self.root, width=28, height=28, borderwidth=0, bd=0,
-                                 bg='#161020', highlightthickness=0)
-
-            # Update image
-            self.canvas.create_image(14, 14, image=self.image)
-
-            # Update position and re-draw
-            x, y = self.__unit_to_pixel()
-            self.canvas.place(x=x, y=y)
+        if self.__is_valid_move(axis, sign):
+            self.__prev_direction = None
+            self.snap_direction = self.curr_direction
+            print('Valid move')
 
         else:
-            print("Invalid")
+            print('Invalid move')
+            if self.__prev_direction is not None:
+                self.curr_direction = self.__prev_direction
+                prev_axis, prev_sign = self.directions[self.__prev_direction][0:2]
 
-    def is_valid_move(self, axis, sign):
-        pos_on_axis = self.position[axis]
+                if not self.__is_valid_move(prev_axis, prev_sign):
+                    self.curr_direction = None
+                else:
+                    print('Valid prev_direction move')
+                    self.snap_direction = self.curr_direction
 
-        new_pos = pos_on_axis + (self.step * sign)
+                self.__prev_direction = None
 
-        # in cases of decimal steps:
-        if sign > 0:
-            rounding_new_pos = ceil  # because value is increased by a decimal step (self.step)
-            rounding_curr_pos = floor
-        elif sign < 0:
-            rounding_new_pos = floor  # because value is decreased by a decimal step (self.step)
-            rounding_curr_pos = ceil
+            else:
+                self.curr_direction = None
 
-        new_pos = rounding_new_pos(new_pos)
+            print(debug_info)
 
-        # trying to access board position on the new_pos position to see if it is a legal move or not:
-        try:
-            if axis == 0:
-                return Board.start_state[rounding_curr_pos(self.position[1])][new_pos] == 0  # at the x-axis (encoded 0)
-            elif axis == 1: # Yup
-                return Board.start_state[new_pos][rounding_curr_pos(self.position[0])] == 0  # at the y-axis (encoded 1)
+    def __is_valid_move(self, axis: int, sign: int):
 
-        except IndexError:
-            raise IndexError("Error")
+        # In cases of Pac-Man's half-moves:
+        if self.__prev_direction is not None:
+            same_axis = abs(self.curr_direction) == abs(self.__prev_direction)
+            if not same_axis:
+                other_axis = (axis + 1) % 2
 
-        # when exception raised, that means block the move, and return False
+                if self.position[other_axis] != int(self.position[other_axis]):
+                    return False
 
+        return super().is_valid_move(axis, sign)
 
+    def __reset_default_attributes(self) -> None:
+        self.image = self.images.return_image('pacmanL')
+        self.position[0], self.position[1] = 13.5, 23.0
+        self.curr_direction = None
 
-
-
-
-# if sign > 0:
-#     if start_state[][ceil(move)] == 0:
-#         return True
-#     return False
-# elif sign < 0:
-#     if start_state[floor(move)] == 0:
-#         return True
-#     return False
-
-    def __unit_to_pixel(self):
-        return self.position[0] * 32, self.position[1] * 32 + 2
+    def __refresh_pacman(self, image_name='pacmanL'):
+        self.image = self.images.return_image(image_name)
+        super().refresh()
