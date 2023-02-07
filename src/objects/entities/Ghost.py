@@ -1,4 +1,4 @@
-from src.objects.entities.Entity import *
+from objects.entities.Entity import *
 
 
 

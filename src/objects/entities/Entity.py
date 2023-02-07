@@ -1,5 +1,5 @@
-from src.board.Board import Board
-from src.game_image import *  # GameImage and PhotoImage
+from board.Board import Board
+from game_image import *  # GameImage and PhotoImage
 
 from tkinter import Canvas
 from math import ceil, floor

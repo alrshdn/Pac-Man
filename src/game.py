@@ -1,11 +1,11 @@
-from src.window import Window
-from src.board.Board import Board
-from src.game_image import GameImage
+from window import Window
+from board.Board import Board
+from game_image import GameImage
 
 from objects.entities.PacMan import PacMan
-from src.objects.entities.Red import Red
-from src.objects.entities.Pink import Pink
-from src.objects.entities.Orange import Orange
+from objects.entities.Red import Red
+from objects.entities.Pink import Pink
+from objects.entities.Orange import Orange
 
 from tkinter import *
 import time
