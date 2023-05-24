@@ -1,5 +1,5 @@
-from objects.entities.Entity import *
-
+from game_image import GameImage
+from objects.entities.Entity import Entity
 
 
 class Ghost(Entity):
@@ -30,13 +30,13 @@ class Ghost(Entity):
         self.target_getter = target_getter
 
         self.target_position = None
-        self.point_canvas = Canvas()
+        #  self.point_canvas = Canvas()
 
     def movement(self):
-        direction = self.search()
-        self.curr_direction = direction
+        new_direction = self.search()
+        self.curr_direction = new_direction
 
-        self.successor(self.directions[direction])
+        self.successor(self.directions[new_direction])
 
     def search(self):
         """
@@ -89,9 +89,9 @@ class Ghost(Entity):
         # Return the direction of movement:
         return succession_direction
 
-    def successor(self, direction: tuple):
+    def successor(self, direction_info: tuple):
         """ Takes direction as input and makes moves by calling movement.  """
-        axis, sign = direction[0:2]
+        axis, sign = direction_info[0:2]
 
         if axis == 0:
             self.x_offset(self.step * sign)

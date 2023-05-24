@@ -1,3 +1,4 @@
+import random
 from window import Window
 from board.Board import Board
 from game_image import GameImage
@@ -10,7 +11,7 @@ from objects.entities.Orange import Orange
 from tkinter import *
 import time
 
-global exists
+global app_running
 
 
 class Game:
@@ -28,7 +29,9 @@ class Game:
                              position=[13.5, 23.0])
 
         def ghost_heuristic(succession, target):
-            return abs(succession[0] - target[0]) + abs(succession[1] - target[1])
+            manhattan_distance = abs(
+                succession[0] - target[0]) + abs(succession[1] - target[1])
+            return manhattan_distance
 
         def red_target_getter():
             return self.pacman.position
@@ -39,14 +42,16 @@ class Game:
             pacman_position = self.pacman.position
 
             if pacman_curr_dir == -1:
-                target_position = [pacman_position[0] - 4, pacman_position[1] - 4]
+                target_position = [
+                    pacman_position[0] - 4, pacman_position[1] - 4]
                 return target_position
 
             if pacman_curr_dir is not None:
                 axis, sign = self.pacman.directions[pacman_curr_dir][0:2]
             else:
                 if pacman_prev_dir == -1:
-                    target_position = [pacman_position[0] - 4, pacman_position[1] - 4]
+                    target_position = [
+                        pacman_position[0] - 4, pacman_position[1] - 4]
                     return target_position
 
                 axis, sign = self.pacman.directions[pacman_prev_dir][0:2]
@@ -76,7 +81,7 @@ class Game:
                              step=0.5,
                              speed=1,
                              position=[1.0, 23.0],
-                             target_position=red_target_getter,
+                             pacman_position=self.pacman.position,
                              heuristic=ghost_heuristic)
 
     def start(self):
@@ -93,19 +98,19 @@ class Game:
         orange = self.orange
 
         root = self.window.root
-        global exists
-        exists = True
+        global app_running
+        app_running = True
 
         def on_closing():
             # if messagebox.askokcancel("Quit", "Do you want to quit?"):
-            global exists
-            exists = False
+            global app_running
+            app_running = False
 
             root.destroy()
 
         root.protocol("WM_DELETE_WINDOW", on_closing)
 
-        while exists:  # Window is running
+        while app_running:  # Window is running
             pacman.movement()
             red.movement()
             pink.movement()
@@ -125,9 +130,11 @@ class Game:
                                 highlightthickness=2, highlightcolor='black', highlightbackground='black')
                 canvas.configure(bg=self.board.wall_color[1])
                 if is_wall:
-                    canvas.create_rectangle(0, 0, 22, 22, fill=self.board.wall_color[0], outline='black')
+                    canvas.create_rectangle(
+                        0, 0, 22, 22, fill=self.board.wall_color[0], outline='black')
                 else:
-                    canvas.create_rectangle(0, 0, 32, 32, fill=self.board.empty_color, outline='black')
+                    canvas.create_rectangle(
+                        0, 0, 32, 32, fill=self.board.empty_color, outline='black')
 
                 canvas.place(width=32, height=32, x=column * 32, y=row * 32)
 

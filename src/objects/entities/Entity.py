@@ -7,12 +7,17 @@ from math import ceil, floor
 
 class Entity(object):
 
+    """
+    This class represent abstracted Entity for all characters in the game.
+    """
+
     def __init__(self,
                  root,
                  images: GameImage,
                  step: float,
                  speed: int,
                  position: list):
+
         # Core:
         self.root = root
         self.canvas = Canvas()
@@ -45,9 +50,11 @@ class Entity(object):
 
         # In cases of decimal steps:
         if sign < 0:  # up and left
-            rounding_new_pos = floor  # because value is decreased by a decimal step (self.step)
+            # because value is decreased by a decimal step (self.step)
+            rounding_new_pos = floor
         else:  # down and right
-            rounding_new_pos = ceil  # because value is increased by a decimal step (self.step)
+            # because value is increased by a decimal step (self.step)
+            rounding_new_pos = ceil
         new_pos = rounding_new_pos(new_pos)
 
         # Trying to access board position on the new_pos position to see if it is a legal move or not:
@@ -83,3 +90,19 @@ class Entity(object):
 
         x, y = self.unit_to_pixel()
         self.canvas.place(x=x, y=y)
+        # try:
+        #     self.c.destroy()
+        # except:
+        #     pass
+        # self.c = Canvas(self.root, width=15 * 32, height=15 * 32,
+
+        #                 background="#ffffff", highlightthickness=0)
+        # self.c.pack()
+        # center_x, center_y = self.unit_to_pixel()
+        # radius = 8 * 32
+        # x1 = center_x - radius
+        # y1 = center_y - radius
+        # x2 = center_x + radius
+        # y2 = center_y + radius
+        # self.c.create_oval(x1, y1, x2, y2, outline='red', fill='')
+        # self.c.place(x=x1, y=y1)

@@ -13,4 +13,4 @@ class Pink(Ghost):
         super().__init__(root, images, step, speed, position, target_position, heuristic)
 
         # Appearance
-        self.image = images.return_image('pinky')
+        self.image = images.image_getter('pinky')

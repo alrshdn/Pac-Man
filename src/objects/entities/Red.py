@@ -14,4 +14,4 @@ class Red(Ghost):
         super().__init__(root, images, step, speed, position, target_position, heuristic)
 
         # Appearance
-        self.image = images.return_image('blinky')
+        self.image = images.image_getter('blinky')

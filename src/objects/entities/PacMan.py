@@ -26,7 +26,7 @@ class PacMan(Entity):
         self.snapshot_direction = -2
 
         # Appearances:
-        self.image = images.return_image('pacmanL')  # override
+        self.image = images.image_getter('pacmanL')  # override
 
         # Stats:
         self.__score = 0
@@ -67,8 +67,8 @@ class PacMan(Entity):
         if self.curr_direction is not None:
             self.__move(self.directions[self.curr_direction])
 
-    def __move(self, direction: tuple):
-        axis, sign, image_name, debug_info = direction
+    def __move(self, direction_info: tuple):
+        axis, sign, image_name, debug_info = direction_info
 
         if self.__is_valid_move(axis, sign):
             self.__prev_direction = None
@@ -108,10 +108,10 @@ class PacMan(Entity):
         return super().is_valid_move(axis, sign)
 
     def __reset_default_attributes(self) -> None:
-        self.image = self.images.return_image('pacmanL')
+        self.image = self.images.image_getter('pacmanL')
         self.position[0], self.position[1] = 13.5, 23.0
         self.curr_direction = None
 
     def __refresh_pacman(self, image_name='pacmanL'):
-        self.image = self.images.return_image(image_name)
+        self.image = self.images.image_getter(image_name)
         super().refresh()
